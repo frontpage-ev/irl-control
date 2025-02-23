@@ -1,0 +1,15 @@
+{
+  "apps": [
+    {
+      "name": "irl-control",
+      "script": "tsx --watch app.ts",
+      "watch": false,
+      "env": {
+        "NODE_ENV": "development"
+      },
+      "env_production": {
+        "NODE_ENV": "production"
+      }
+    }
+  ]
+}
