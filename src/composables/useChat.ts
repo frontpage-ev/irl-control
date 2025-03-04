@@ -2,7 +2,10 @@ import { EventEmitter } from 'events'
 import TES from 'tesjs'
 
 export function useChat(config: Config, ee: EventEmitter) {
-    const tes = new TES(config.tes)
+    const tes = new TES({
+        identity: config.twitch.identity,
+        listener: {type: 'websocket'},
+    })
 
     tes.on('channel.chat.message', (event: any) => {
         if (event.message_type !== 'text' || !event.message.text.startsWith('!irlc')) {

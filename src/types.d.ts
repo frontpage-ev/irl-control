@@ -16,15 +16,12 @@ interface Config {
         broadcaster_user_id: string
         user_id: string
     }
-    tes: {
+    twitch: {
         identity: {
             id: string
             secret: string
             accessToken: string
             refreshToken: string
-        }
-        listener: {
-            type: 'websocket'
         }
     }
     stats_server: StatsServerOptions

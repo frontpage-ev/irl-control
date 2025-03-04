@@ -1,6 +1,6 @@
 # IRL Control
 
-A quite simple application wich allow you to automatically switch OBS scenes depending on the current state of
+A quite simple application which allows you to automatically switch OBS scenes depending on the current state of
 your [Streaming-Relay](https://github.com/frontpage-ev/srtrelay) connection. At the moment it is only possible to switch
 between two scenes (one for online and one for offline).
 
@@ -25,11 +25,15 @@ cd irl-control
 yarn install
 ```
 
-### Getting Access Tokens for TES
+### Getting Access Tokens for Twitch API
+
+Our applications require access to the Twitch API to read chat messages and send messages to the chat. To get access to
+the Twitch API you need to create a new application in the Twitch Developer Console.
 
 1. Go to [Twitch Developer Console](https://dev.twitch.tv/console/apps)
 2. Create a new application
-3. Copy the `Client ID` and `Client Secret` to your `config.json` file in the `tes.identity` section
+3. Use `http://localhost` as the OAuth Redirect URL (you can change this later)
+4. Copy the `Client ID` and `Client Secret` to your `config.json` file in the `twitch.identity` section
 
 **Generate Access Token**
 
@@ -42,7 +46,7 @@ With the following quick link you can generate an access token for the required 
 1. Go to [Twitch Token Generator](https://twitchtokengenerator.com/quick/BtuUF4hq3O)
 2. Provide the `Client ID` and `Client Secret` from the previous step
 3. Click on `Generate Token`
-4. Copy the `Access Token` and `Refresh Token` to your `config.json` file in the `tes.identity` section
+4. Copy the `Access Token` and `Refresh Token` to your `config.json` file in the `twitch.identity` section
 
 ### Configuration
 
@@ -66,15 +70,12 @@ Create a `config.json` file in the root directory of the project and add the fol
     "broadcaster_user_id": "106415581",
     "user_id": "106415581"
   },
-  "tes": {
+  "twitch": {
     "identity": {
       "id": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
       "secret": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
       "accessToken": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
       "refreshToken": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
-    },
-    "listener": {
-      "type": "websocket"
     }
   },
   "stats_server": {
