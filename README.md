@@ -25,6 +25,25 @@ cd irl-control
 yarn install
 ```
 
+### Getting Access Tokens for TES
+
+1. Go to [Twitch Developer Console](https://dev.twitch.tv/console/apps)
+2. Create a new application
+3. Copy the `Client ID` and `Client Secret` to your `config.json` file in the `tes.identity` section
+
+**Generate Access Token**
+
+With the following quick link you can generate an access token for the required scopes:
+
+- `channel:bot`
+- `user:bot`
+- `user:read:chat`
+
+1. Go to [Twitch Token Generator](https://twitchtokengenerator.com/quick/BtuUF4hq3O)
+2. Provide the `Client ID` and `Client Secret` from the previous step
+3. Click on `Generate Token`
+4. Copy the `Access Token` and `Refresh Token` to your `config.json` file in the `tes.identity` section
+
 ### Configuration
 
 Create a `config.json` file in the root directory of the project and add the following content:
@@ -43,6 +62,21 @@ Create a `config.json` file in the root directory of the project and add the fol
       "stats": "Stats"
     }
   },
+  "chat": {
+    "broadcaster_user_id": "106415581",
+    "user_id": "106415581"
+  },
+  "tes": {
+    "identity": {
+      "id": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+      "secret": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+      "accessToken": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+      "refreshToken": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+    },
+    "listener": {
+      "type": "websocket"
+    }
+  },
   "stats_server": {
     "type": "belabox_cloud",
     "url": "https://stats.srt.belabox.net/XXXXX",
@@ -57,6 +91,9 @@ Create a `config.json` file in the root directory of the project and add the fol
 
 **Belabox Cloud**
 
+Our applications support the Belabox Cloud as a stats server. You can use the following configuration to connect to the
+Belabox Cloud:
+
 ```json
 {
   "stats_server": {
@@ -69,12 +106,41 @@ Create a `config.json` file in the root directory of the project and add the fol
 
 **SRT Relay**
 
+Our applications support the SRT Relay as a stats server. You can use the following configuration to connect to the
+SRT Relay:
+
 ```json
 {
   "stats_server": {
     "type": "srtrelay",
     "url": "http://127.0.0.1:34101",
     "publisher": "publish/test/"
+  }
+}
+```
+
+**Profiles**
+
+Profiles allows you to switch between different configurations. You can define multiple profiles in the `config.json`
+file and switch between them by setting the `profile` parameter in the `config.json` file. Each profile can have its own
+configuration, which replaces the default configuration in your `config.json` file.
+
+```json
+{
+  "profile": "default",
+  "profiles": {
+    "gz": {
+      "chat": {
+        "broadcaster_user_id": "106415581",
+        "user_id": "106415581"
+      }
+    },
+    "gz_qa": {
+      "chat": {
+        "broadcaster_user_id": "810421919",
+        "user_id": "106415581"
+      }
+    }
   }
 }
 ```
