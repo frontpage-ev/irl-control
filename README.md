@@ -127,7 +127,7 @@ configuration, which replaces the default configuration in your `config.json` fi
 
 ```json
 {
-  "profile": "default",
+  "profile": "gz",
   "profiles": {
     "gz": {
       "chat": {
