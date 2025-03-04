@@ -6,9 +6,7 @@ const excludedStats: string[] = [
 
 const knownKeysNotNull: string[] = []
 
-export function joinStats(stats: {
-    [key: string]: number
-}) {
+export function joinStats(stats: Kv): string {
     // join 3 stats each line where stats is not 0
     const lines = []
     let line = []
@@ -57,4 +55,9 @@ export async function setText(obs: OBSWebSocket, inputName: string, text: string
     } catch (error) {
         console.error('Failed to update OBS (text not existing?).')
     }
+}
+
+export function sprintf(format: string, ...args: any[]) {
+    let i = 0
+    return format.replace(/%s/g, () => args[i++])
 }

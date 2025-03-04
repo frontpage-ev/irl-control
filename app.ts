@@ -1,14 +1,14 @@
 import OBSWebSocket from 'obs-websocket-js'
-import axios, { AxiosResponse } from 'axios'
 import { EventEmitter } from 'events'
 import { joinStats, setText } from './helpers'
 import * as fs from 'node:fs'
+import { StatsServer } from './stats-server'
 
 const config: Config = JSON.parse(fs.readFileSync('config.json', 'utf-8'))
-const socketsUrl: string = sprintf('%s/sockets', config.srt_relay.url)
 
 const obs = new OBSWebSocket()
 const ee = new EventEmitter()
+const statsServer = new StatsServer(config.stats_server)
 
 obs.on('ConnectionOpened', () => {
     console.log('OBS Websocket connection opened')
@@ -22,17 +22,17 @@ obs.on('ConnectionError', (error) => {
     console.error('Connection error:', error)
 })
 
-ee.on('SocketOnlineHeartbeat', async (socket: Socket) => {
-    await setText(obs, config.obs.text_sources.info, 'Stream: Connected')
-    await setText(obs, config.obs.text_sources.stats, joinStats(socket.stats))
+ee.on('SocketOnlineHeartbeat', async (stats: Stats) => {
+    await setText(obs, config.obs.sources.info, 'Stream: Connected')
+    await setText(obs, config.obs.sources.stats, joinStats(stats))
 })
 
-ee.on('SocketOfflineHeartbeat', async (socket: Socket | undefined) => {
-    await setText(obs, config.obs.text_sources.info, `Stream: Disconnected (${offlineDuration}s)`)
-    if (socket) {
-        await setText(obs, config.obs.text_sources.stats, joinStats(socket.stats))
+ee.on('SocketOfflineHeartbeat', async (stats: Stats | undefined) => {
+    await setText(obs, config.obs.sources.info, `Stream: Disconnected (${offlineDuration}s)`)
+    if (stats) {
+        await setText(obs, config.obs.sources.stats, joinStats(stats))
     } else {
-        await setText(obs, config.obs.text_sources.stats, '')
+        await setText(obs, config.obs.sources.stats, '')
     }
 })
 
@@ -68,16 +68,16 @@ setInterval(async () => {
         if (!obs.identified) {
             await obs.connect(config.obs.url, config.obs.password)
         }
-        const {data} = await axios.get(socketsUrl) as AxiosResponse<Socket[]>
-        const stream = data.find((socket: Socket) => socket.stream_id.startsWith('publish/test/'))
+        const stats: Stats | undefined = await statsServer.getStreamStats()
 
-        if (stream) {
-            logStats(stream.stats).then(_r => {})
-            if (stream.stats.MsRTT > config.health_check.max_ms_rtt) {
-                console.log('Stream is unhealthy, RTT is too high:', stream.stats.MsRTT)
-                await handleStreamUnhealthy(stream)
+        if (stats) {
+            // noinspection ES6MissingAwait
+            logStats(stats)
+            if (stats.MsRTT > config.health_check.max_ms_rtt) {
+                console.log('Stream is unhealthy, RTT is too high:', stats.MsRTT)
+                await handleStreamUnhealthy(stats)
             } else {
-                await handleStreamHealthy(stream)
+                await handleStreamHealthy(stats)
             }
         } else {
             await handleStreamUnhealthy()
@@ -87,22 +87,17 @@ setInterval(async () => {
     }
 }, 1000)
 
-function sprintf(format: string, ...args: any[]) {
-    let i = 0
-    return format.replace(/%s/g, () => args[i++])
-}
-
-async function handleStreamHealthy(stream: Socket) {
+async function handleStreamHealthy(stats: Stats) {
     // Stream is live, reset the offline timer
     offlineStartTime = null
     offlineDuration = 0
 
-    if (stream.stats.MsRTT > config.health_check.warn_ms_rtt) {
-        console.log('Stream is live, RTT is high:', stream.stats.MsRTT)
+    if (stats.MsRTT > config.health_check.warn_ms_rtt) {
+        console.log('Stream is live, RTT is high:', stats.MsRTT)
     } else {
-        console.log('Stream is live, RTT is good:', stream.stats.MsRTT)
+        console.log('Stream is live, RTT is good:', stats.MsRTT)
     }
-    ee.emit('SocketOnlineHeartbeat', stream)
+    ee.emit('SocketOnlineHeartbeat', stats)
 
     if (markedOffline) {
         ee.emit('StreamReconnected')
@@ -110,7 +105,7 @@ async function handleStreamHealthy(stream: Socket) {
     }
 }
 
-async function handleStreamUnhealthy(stream: Socket | undefined = undefined) {
+async function handleStreamUnhealthy(stream: Stats | undefined = undefined) {
     // Stream is offline, start or continue the offline timer
     if (offlineStartTime === null) {
         // Start timing if it's the first offline check

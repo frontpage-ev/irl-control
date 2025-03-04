@@ -38,17 +38,43 @@ Create a `config.json` file in the root directory of the project and add the fol
       "normal": "Live",
       "offline": "Disconnected"
     },
-    "text_sources": {
+    "sources": {
       "info": "Info",
       "stats": "Stats"
     }
   },
-  "srt_relay": {
-    "url": "http://127.0.0.1:34101"
+  "stats_server": {
+    "type": "belabox_cloud",
+    "url": "https://stats.srt.belabox.net/XXXXX",
+    "publisher": "live"
   },
   "health_check": {
     "warn_ms_rtt": 500,
     "max_ms_rtt": 2000
+  }
+}
+```
+
+**Belabox Cloud**
+
+```json
+{
+  "stats_server": {
+    "type": "belabox_cloud",
+    "url": "https://stats.srt.belabox.net/XXXXX",
+    "publisher": "live"
+  }
+}
+```
+
+**SRT Relay**
+
+```json
+{
+  "stats_server": {
+    "type": "srtrelay",
+    "url": "http://127.0.0.1:34101",
+    "publisher": "publish/test/"
   }
 }
 ```

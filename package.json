@@ -5,6 +5,7 @@
   "main": "app.ts",
   "type": "module",
   "scripts": {
+    "start": "npx tsx app.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
