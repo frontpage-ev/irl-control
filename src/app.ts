@@ -75,6 +75,6 @@ if (config.profile) {
     console.log(`Using profile: ${config.profile}`)
     Object.assign(config, config.profiles[config.profile])
 }
-const {obs} = useObs(config, ee)
+const {obs} = useObs()
 const healthCheck = useHealthCheck(config, ee, obs)
 useChat(config, ee)

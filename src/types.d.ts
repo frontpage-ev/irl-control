@@ -20,8 +20,8 @@ interface Config {
         identity: {
             id: string
             secret: string
-            accessToken: string
-            refreshToken: string
+            access_token: string
+            refresh_token: string
         }
     }
     stats_server: StatsServerOptions

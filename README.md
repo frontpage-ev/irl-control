@@ -74,8 +74,8 @@ Create a `config.json` file in the root directory of the project and add the fol
     "identity": {
       "id": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
       "secret": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-      "accessToken": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-      "refreshToken": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+      "access_token": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+      "refresh_token": "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
     }
   },
   "stats_server": {

@@ -3,7 +3,12 @@ import TES from 'tesjs'
 
 export function useChat(config: Config, ee: EventEmitter) {
     const tes = new TES({
-        identity: config.twitch.identity,
+        identity: {
+            id: config.twitch.identity.id,
+            secret: config.twitch.identity.secret,
+            accessToken: config.twitch.identity.access_token,
+            refreshToken: config.twitch.identity.refresh_token,
+        },
         listener: {type: 'websocket'},
     })
 

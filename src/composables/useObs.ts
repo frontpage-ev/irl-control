@@ -1,7 +1,6 @@
-import { EventEmitter } from 'events'
 import OBSWebSocket from 'obs-websocket-js'
 
-export function useObs(config: Config, ee: EventEmitter) {
+export function useObs() {
     const obs = new OBSWebSocket()
 
     obs.on('ConnectionOpened', () => {
