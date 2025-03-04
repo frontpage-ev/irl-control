@@ -34,6 +34,13 @@ interface Config {
     }
 }
 
+interface ProfiledConfig extends Config {
+    profile: string
+    profiles: {
+        [key: string]: Partial<Config>
+    }
+}
+
 interface StatsServerOptions {
     type: 'srtrelay' | 'belabox_cloud'
     url: string

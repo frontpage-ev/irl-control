@@ -5,10 +5,7 @@ export function useChat(config: Config, ee: EventEmitter) {
     const tes = new TES(config.tes)
 
     tes.on('channel.chat.message', (event: any) => {
-        if (event.message_type !== 'text') {
-            return
-        }
-        if (!event.message.text.startsWith('!irlc')) {
+        if (event.message_type !== 'text' || !event.message.text.startsWith('!irlc')) {
             return
         }
         const args = event.message.text.split(' ')
@@ -21,9 +18,15 @@ export function useChat(config: Config, ee: EventEmitter) {
         }
         const command = args[1]
         if (command === 'pause') {
-            ee.emit('PausePolling')
-        } else if (command === 'start') {
-            ee.emit('ResumePolling')
+            ee.emit('PauseHealthCheck')
+        } else if (['start', 'resume'].includes(command)) {
+            ee.emit('ResumeHealthCheck')
+        } else if (command === 'offline') {
+            ee.emit('StreamOffline')
+        } else if (['live', 'online'].includes(command)) {
+            ee.emit('StreamReconnected')
+        } else if (command === 'profile') {
+            ee.emit('ChangeProfile', args[2] ?? 'default')
         } else if (command === 'rtt') {
             console.log('RTT')
         } else {

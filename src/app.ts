@@ -14,7 +14,7 @@ ee.on('SocketOnlineHeartbeat', async (stats: Stats) => {
 })
 
 ee.on('SocketOfflineHeartbeat', async (stats: Stats | undefined) => {
-    await setText(obs, config.obs.sources.info, `Stream: Disconnected (${offlineDuration}s)`)
+    await setText(obs, config.obs.sources.info, `Stream: Disconnected (${healthCheck.state.offlineDuration}s)`)
     if (stats) {
         await setText(obs, config.obs.sources.stats, joinStats(stats))
     } else {
@@ -44,9 +44,37 @@ ee.on('StreamReconnected', async () => {
     }
 })
 
+ee.on('PauseHealthCheck', () => {
+    healthCheck.state.paused = true
+    console.log('Health check paused')
+})
+
+ee.on('ResumeHealthCheck', () => {
+    healthCheck.state.paused = false
+    console.log('Health check resumed')
+})
+
+ee.on('ChangeProfile', (profile: string) => {
+    console.log(`Changing profile to: ${profile}`)
+    const newConfig: ProfiledConfig = JSON.parse(fs.readFileSync('config.json', 'utf-8'))
+    if (!newConfig.profiles[profile]) {
+        console.error(`Profile ${profile} not found`)
+        return
+    }
+    newConfig.profile = profile
+    // save the new profile
+    fs.writeFileSync('config.json', JSON.stringify(newConfig, null, 2))
+    // restart the app
+    process.exit()
+})
+
 
 // bootstrap the app
-const config: Config = JSON.parse(fs.readFileSync('config.json', 'utf-8'))
+const config: ProfiledConfig = JSON.parse(fs.readFileSync('config.json', 'utf-8'))
+if (config.profile) {
+    console.log(`Using profile: ${config.profile}`)
+    Object.assign(config, config.profiles[config.profile])
+}
 const {obs} = useObs(config, ee)
-const {offlineDuration} = useHealthCheck(config, ee, obs)
+const healthCheck = useHealthCheck(config, ee, obs)
 useChat(config, ee)

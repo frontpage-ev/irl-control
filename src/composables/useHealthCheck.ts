@@ -3,6 +3,13 @@ import { useStatsServer } from './useStatsServer'
 import OBSWebSocket from 'obs-websocket-js'
 import { logStats } from '../helpers'
 
+interface State {
+    offlineDuration: number
+    offlineStartTime: number | null
+    markedOffline: boolean
+    paused: boolean
+}
+
 export function useHealthCheck(
     config: Config,
     ee: EventEmitter,
@@ -10,12 +17,18 @@ export function useHealthCheck(
 ) {
     const {getStreamStats} = useStatsServer(config)
 
-    let offlineStartTime: any = null  // Variable to track the start time of offline state
-    let offlineDuration = 0  // Variable to count seconds offline
-    let markedOffline = false  // Variable to track if the stream was marked offline
+    const state: State = {
+        offlineDuration: 0,
+        offlineStartTime: null,
+        markedOffline: false,
+        paused: false,
+    }
 
     // here is our core logic, checking the stream status every second
     setInterval(async () => {
+        if (state.paused) {
+            return
+        }
         try {
             if (!obs.identified) {
                 await obs.connect(config.obs.url, config.obs.password)
@@ -41,8 +54,8 @@ export function useHealthCheck(
 
     async function handleStreamHealthy(stats: Stats) {
         // Stream is live, reset the offline timer
-        offlineStartTime = null
-        offlineDuration = 0
+        state.offlineStartTime = null
+        state.offlineDuration = 0
 
         if (stats.MsRTT > config.health_check.warn_ms_rtt) {
             console.log('Stream is live, RTT is high:', stats.MsRTT)
@@ -51,31 +64,31 @@ export function useHealthCheck(
         }
         ee.emit('SocketOnlineHeartbeat', stats)
 
-        if (markedOffline) {
+        if (state.markedOffline) {
             ee.emit('StreamReconnected')
-            markedOffline = false
+            state.markedOffline = false
         }
     }
 
     async function handleStreamUnhealthy(stream: Stats | undefined = undefined) {
         // Stream is offline, start or continue the offline timer
-        if (offlineStartTime === null) {
+        if (state.offlineStartTime === null) {
             // Start timing if it's the first offline check
-            offlineStartTime = Date.now()
+            state.offlineStartTime = Date.now()
         }
 
         // Calculate the duration in seconds
-        offlineDuration = Math.floor((Date.now() - offlineStartTime) / 1000)
-        console.log(`Stream is offline for ${offlineDuration} seconds`)
+        state.offlineDuration = Math.floor((Date.now() - state.offlineStartTime) / 1000)
+        console.log(`Stream is offline for ${state.offlineDuration} seconds`)
         ee.emit('SocketOfflineHeartbeat', stream)
 
-        if (offlineDuration >= 5 && !markedOffline) {
-            ee.emit('StreamOffline', offlineDuration)
-            markedOffline = true
+        if (state.offlineDuration >= 5 && !state.markedOffline) {
+            ee.emit('StreamOffline', state.offlineDuration)
+            state.markedOffline = true
         }
     }
 
     return {
-        offlineDuration,
+        state,
     }
 }
