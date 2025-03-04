@@ -2,7 +2,7 @@
   "apps": [
     {
       "name": "irl-control",
-      "script": "tsx --watch app.ts",
+      "script": "tsx --watch src/app.ts",
       "watch": false,
       "env": {
         "NODE_ENV": "development"

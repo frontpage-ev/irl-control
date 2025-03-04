@@ -1,4 +1,5 @@
 import OBSWebSocket from 'obs-websocket-js'
+import fs from 'node:fs'
 
 const excludedStats: string[] = [
     'PktSentTotalPktSentTotal',
@@ -60,4 +61,18 @@ export async function setText(obs: OBSWebSocket, inputName: string, text: string
 export function sprintf(format: string, ...args: any[]) {
     let i = 0
     return format.replace(/%s/g, () => args[i++])
+}
+
+export async function logStats(stats: any) {
+    // copy stats object
+    const statsCopy = {...stats}
+    // trim zero values
+    for (const key in statsCopy) {
+        if (statsCopy[key] === 0) {
+            delete statsCopy[key]
+        }
+    }
+    // append to file with timestamp
+    statsCopy.Timestamp = new Date().toISOString()
+    fs.appendFileSync('stats.log', JSON.stringify(statsCopy) + '\n')
 }

@@ -12,6 +12,21 @@ interface Config {
             stats: string
         }
     }
+    chat: {
+        broadcaster_user_id: string
+        user_id: string
+    }
+    tes: {
+        identity: {
+            id: string
+            secret: string
+            accessToken: string
+            refreshToken: string
+        }
+        listener: {
+            type: 'websocket'
+        }
+    }
     stats_server: StatsServerOptions
     health_check: {
         warn_ms_rtt: number
@@ -129,3 +144,5 @@ interface Socket {
         PktReorderTolerance: number
     }
 }
+
+declare module 'tesjs';

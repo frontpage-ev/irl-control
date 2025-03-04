@@ -2,10 +2,10 @@
   "name": "irl",
   "version": "1.0.0",
   "description": "",
-  "main": "app.ts",
+  "main": "src/app.ts",
   "type": "module",
   "scripts": {
-    "start": "npx tsx app.ts",
+    "start": "npx tsx src/app.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -14,7 +14,8 @@
   "dependencies": {
     "axios": "^1.7.7",
     "events": "^3.3.0",
-    "obs-websocket-js": "^5.0.6"
+    "obs-websocket-js": "^5.0.6",
+    "tesjs": "^1.0.4"
   },
   "devDependencies": {
     "@types/node": "^22.7.9"
