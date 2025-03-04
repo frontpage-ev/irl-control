@@ -10,7 +10,7 @@ between two scenes (one for online and one for offline).
 
 - [Node.js](https://nodejs.org/en/download/)
 - [OBS Studio](https://obsproject.com/download)
-- [Streaming-Relay](https://github.com/frontpage-ev/srtrelay)
+- [Streaming-Relay](https://github.com/frontpage-ev/srtrelay) or [Belabox Cloud](https://cloud.belabox.net)
 
 ### Clone the repository
 
@@ -145,8 +145,16 @@ configuration, which replaces the default configuration in your `config.json` fi
 }
 ```
 
-### Run the application
+## Run the application
 
 ```bash
 pm2 start ecosystem.config.js
 ```
+
+## Chat Commands
+
+- `!irlc pause` - Pause the automatic scene switching
+- `!irlc resume` - Resume the automatic scene switching
+- `!irlc online` - Switch to the online scene
+- `!irlc offline` - Switch to the offline scene
+- `!irlc profile <profile>` - Switch to a different profile
