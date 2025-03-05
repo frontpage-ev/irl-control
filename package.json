@@ -13,11 +13,16 @@
   "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e",
   "dependencies": {
     "axios": "^1.7.7",
+    "cors": "^2.8.5",
     "events": "^3.3.0",
+    "express": "^4.21.2",
+    "express-basic-auth": "^1.2.1",
     "obs-websocket-js": "^5.0.6",
     "tesjs": "^1.0.4"
   },
   "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
     "@types/node": "^22.7.9"
   }
 }

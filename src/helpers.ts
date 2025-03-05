@@ -76,3 +76,16 @@ export async function logStats(stats: any) {
     statsCopy.Timestamp = new Date().toISOString()
     fs.appendFileSync('stats.log', JSON.stringify(statsCopy) + '\n')
 }
+
+export function exclude(data: any, keys: string[]): any {
+    const conf = JSON.parse(JSON.stringify(data))
+    for (const key of keys) {
+        const keys = key.split('.')
+        let obj = conf
+        for (let i = 0; i < keys.length - 1; i++) {
+            obj = obj[keys[i]]
+        }
+        delete obj[keys[keys.length - 1]]
+    }
+    return conf
+}

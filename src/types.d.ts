@@ -1,7 +1,6 @@
 interface Config {
     obs: {
-        url?: string
-        port?: number
+        url: string
         password?: string
         scenes: {
             normal: string

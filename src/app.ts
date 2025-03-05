@@ -5,6 +5,7 @@ import * as fs from 'node:fs'
 import { useChat } from './composables/useChat'
 import { useObs } from './composables/useObs'
 import { useHealthCheck } from './composables/useHealthCheck'
+import { useApi } from './composables/useApi'
 
 const ee = new EventEmitter()
 
@@ -78,3 +79,4 @@ if (config.profile) {
 const {obs} = useObs()
 const healthCheck = useHealthCheck(config, ee, obs)
 useChat(config, ee)
+useApi(config, ee, healthCheck)

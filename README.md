@@ -159,3 +159,22 @@ pm2 start ecosystem.config.js
 - `!irlc online` - Switch to the online scene
 - `!irlc offline` - Switch to the offline scene
 - `!irlc profile <profile>` - Switch to a different profile
+
+## API
+
+The application provides an API to control the process. By default, the API is one port relative to the OBS WebSocket
+port and uses the same password for authentication. So if your OBS WebSocket port is `4455` the API port is `4456`.
+
+The username is `admin`. Be sure to have a strong password set.
+
+### Endpoints
+
+- `GET /api/health-check` - Get the current health check status
+- `POST /api/health-check/pause` - Pause the health check
+- `POST /api/health-check/resume` - Resume the health check
+- `POST /api/profiles` - Switch to a different profile
+- `GET /api/config` - Get the current configuration
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
